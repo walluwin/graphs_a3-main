@@ -49,29 +49,19 @@ public final class Algorithms {
             //union
             if (rootX != rootY) {
                 if (size[rootX] < size[rootY]) {
-                    int temp = rootX; //0
-                    rootX = rootY; //2
-                    rootY = temp; //0
+                    int tmp = rootX;
+                    rootX = rootY;
+                    rootY = tmp;
                 }
                 parent[rootY] = rootX;
-                size[rootX] = size[rootX] + size[rootY];
-
+                size[rootX] += size[rootY];
                 components--;
                 largest = Math.max(largest, size[rootX]);
-
-//                if (rank[rootX] < rank[rootY]) {
-//                    parent[rootX] = rootY;
-//                } else if (rank[rootX] > rank[rootY]) {
-//                    parent[rootY] = rootX;
-//                } else {
-//                    parent[rootY] = rootX;
-//                    rank[rootX]++;
-//                }
             }
             states.add(new int[]{components, largest});
         }
         Map<String, Object> result = new HashMap<>();
-        result.put("states = ", states);
+        result.put("states:", states);
         return result;
     }
 
