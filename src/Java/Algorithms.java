@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,11 +14,17 @@ public final class Algorithms {
         int n = Input.vertexCount(input);
         int[][] operations = Input.operations(input); //union [[0,1],[1,2],[2,3],[0,2],[4,4]]
         int[] parent = new int[n];
-        int[] rank = new int[n];
+        //int[] rank = new int[n];
+        int[] size = new int[n];
+
+        int components = n;
+        int largest = 1;
+        List<int[]> states = new ArrayList<>();
 
         //dsu check
         for(int i = 0; i < n; i++) {
             parent[i] = i; // x = 0 1 2 3 4 parents[x] = 0 1 2 3 4
+            size[i] = 1;
         }
 
         for (int[] operation : operations) { // разделили каждую операцию
@@ -39,16 +48,31 @@ public final class Algorithms {
 
             //union
             if (rootX != rootY) {
-                if (rank[rootX] < rank[rootY]) {
-                    parent[rootX] = rootY;
-                } else if (rank[rootX] > rank[rootY]) {
-                    parent[rootY] = rootX;
-                } else {
-                    parent[rootY] = rootX;
-                    rank[rootX]++;
+                if (size[rootX] < size[rootY]) {
+                    int temp = rootX; //0
+                    rootX = rootY; //2
+                    rootY = temp; //0
                 }
+                parent[rootY] = rootX;
+                size[rootX] = size[rootX] + size[rootY];
+
+                components--;
+                largest = Math.max(largest, size[rootX]);
+
+//                if (rank[rootX] < rank[rootY]) {
+//                    parent[rootX] = rootY;
+//                } else if (rank[rootX] > rank[rootY]) {
+//                    parent[rootY] = rootX;
+//                } else {
+//                    parent[rootY] = rootX;
+//                    rank[rootX]++;
+//                }
             }
+            states.add(new int[]{components, largest});
         }
+        Map<String, Object> result = new HashMap<>();
+        result.put("states = ", states);
+        return result;
     }
 
     /** Separate Kruskal implementation; return cost, edge_ids, components. */
