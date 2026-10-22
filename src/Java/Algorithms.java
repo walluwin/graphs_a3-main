@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Implement the six methods and add your route-reconstruction helper.
@@ -10,6 +7,38 @@ import java.util.Map;
  */
 public final class Algorithms {
     /** DSU with path compression and union by size/rank; return states. */
+    private static int find(int n, int[] parent) {
+        int root = n;
+
+        while (parent[root] != root) {
+            root = parent[root];
+        }
+
+        while (parent[n] != root) {
+            int next = parent[n];
+            parent[n] = root;
+            n = next;
+        }
+        return root;
+    }
+
+    private static boolean union(int x, int y, int[] parent, int[] size) {
+        int rootX = find(x, parent);
+        int rootY = find(y, parent);
+        if (rootX == rootY) {
+            return false;
+        }
+
+        if(size[rootX] < size[rootY]){
+            int tmp = rootX;
+            rootX = rootY;
+            rootY = tmp;
+        }
+        parent[rootX] = rootX;
+        size[rootX] += size[rootY];
+        return true;
+    }
+
     static Map<String, Object> dsu(Map<String, Object> input) {
         int n = Input.vertexCount(input);
         int[][] operations = Input.operations(input); //union [[0,1],[1,2],[2,3],[0,2],[4,4]]
@@ -17,9 +46,9 @@ public final class Algorithms {
         //int[] rank = new int[n];
         int[] size = new int[n];
 
+        int[][] states = new int[operations.length][];
         int components = n;
         int largest = 1;
-        List<int[]> states = new ArrayList<>();
 
         //dsu check
         for(int i = 0; i < n; i++) {
@@ -27,38 +56,17 @@ public final class Algorithms {
             size[i] = 1;
         }
 
-        for (int[] operation : operations) { // разделили каждую операцию
-            int x = operation[0]; // [0,1] = 0
-            int y = operation[1]; // [0,1] = 1
-
-            // path compression
-            int rootX = x;
-            while (parent[x] != x) {
-                int next = parent[x];
-                parent[x] = rootX;
-                x = next;
-            }
-
-            int rootY = y;
-            while (parent[y] != y) {
-                int next = parent[y];
-                parent[y] = rootY;
-                y = next;
-            }
-
-            //union
-            if (rootX != rootY) {
-                if (size[rootX] < size[rootY]) {
-                    int tmp = rootX;
-                    rootX = rootY;
-                    rootY = tmp;
-                }
-                parent[rootY] = rootX;
-                size[rootX] += size[rootY];
+        for (int i = 0; i < operations.length; i++) {
+            int x = operations[i][0];
+            int y = operations[i][1];
+            if (union(x ,y, parent, size)) {
                 components--;
-                largest = Math.max(largest, size[rootX]);
+                int root = find(x, parent);
+                if (size[root] > largest) {
+                    largest = size[root];
+                }
             }
-            states.add(new int[]{components, largest});
+            states[i] = new int[] {components, largest};
         }
         Map<String, Object> result = new HashMap<>();
         result.put("states:", states);
@@ -69,6 +77,19 @@ public final class Algorithms {
     static Map<String, Object> kruskal(Map<String, Object> input) {
         int n = Input.vertexCount(input);
         int[][] edges = Input.edges(input);
+        int m = edges.length;
+
+        int cost;
+        int[] edge_ids;
+        int components;
+
+        int t = 0;
+
+        for (int[] edge : edges) {
+            edges[t++] = edge;
+        }
+
+
 
         throw new UnsupportedOperationException("TODO kruskal");
     }
