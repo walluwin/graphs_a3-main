@@ -79,19 +79,56 @@ public final class Algorithms {
         int[][] edges = Input.edges(input);
         int m = edges.length;
 
-        int cost;
-        int[] edge_ids;
-        int components;
+        // sorting
+        Integer[] order = new Integer[m];
+        for (int i = 0; i < m; i++) {
+            order[i] = i;
+        }
 
-        int t = 0;
+        java.util.Arrays.sort(order, (a, b) -> {
+            int weightA = edges[a][2];
+            int weightB = edges[b][2];
+            int comparison = Integer.compare(weightA, weightB);
+            if (comparison == 0) {
+                return Integer.compare(a, b);
+            }
+            return comparison;
+        });
 
-        for (int[] edge : edges) {
-            edges[t++] = edge;
+        int[] parent = new int[n];
+        int[] size = new int[n];
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+            size[i] = 1;
+        }
+
+        long cost = 0;
+        int components = n;
+        List<Integer> edge_ids = new ArrayList<>();
+        // самое главное
+        for (int id : order) {
+            int u = edges[id][0];
+            int v = edges[id][1];
+            int weight = edges[id][2];
+
+            // проверка на циклы
+            if (find(u, parent) != find(v, parent)) {
+
+                // 6. Add the edge to the spanning forest
+                edge_ids.add(id);
+                cost += weight;
+
+                union(u, v, parent, size);
+                components--;
+            }
         }
 
 
-
-        throw new UnsupportedOperationException("TODO kruskal");
+        Map<String, Object> result = new HashMap<>();
+        result.put("cost:", cost);
+        result.put("edge_ids:", edge_ids);
+        result.put("components:", components);
+        return result;
     }
 
     /** Separate Prim implementation; restart for every unvisited component. */
