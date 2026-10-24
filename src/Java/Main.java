@@ -31,9 +31,11 @@ public final class Main {
         }
     }
 
-    static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-        PrintWriter writer = new PrintWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8), true);
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(System.in, StandardCharsets.UTF_8));
+        PrintWriter writer = new PrintWriter(
+                new OutputStreamWriter(System.out, StandardCharsets.UTF_8), true);
 
         String line;
         while ((line = reader.readLine()) != null) {
