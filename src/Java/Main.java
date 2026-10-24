@@ -31,7 +31,7 @@ public final class Main {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8), true);
 
